@@ -1,10 +1,15 @@
 import logging
 import os
+import sys
 
 import yaml
 from lintipy import DownloadCodeMixin, GitHubEvent, QUEUED
 
 logger = logging.getLogger('suite')
+
+root_logger = logging.getLogger('')
+root_logger.setLevel(logging.DEBUG)
+root_logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 class CheckSuite(DownloadCodeMixin, GitHubEvent):
@@ -20,7 +25,11 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         with open('check_runs.yml') as fs:
             supported_check_runs = set(yaml.safe_load(fs))
 
-        map(self.create_check_run, supported_check_runs & config)
+        logger.debug(config)
+        logger.debug(supported_check_runs)
+
+        for name in supported_check_runs & config:
+            self.create_check_run(name)
 
     @property
     def head_branch(self):
@@ -46,13 +55,16 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
     def load_config(self, path):
         """Return config dictionary or ``None`` if no config was found."""
         config_path = os.path.join(path, self.config_file_pattern)
+        logger.info("Reading config: %s", config_path)
         try:
             with open(config_path) as fs:
                 return yaml.safe_load(fs)
         except FileNotFoundError:
+            logger.error("file not found")
             return None
 
     def create_check_run(self, name):
+        logger.info("createing check run: %s", name)
         data = {
             'name': name,
             'head_branch': self.head_branch,
