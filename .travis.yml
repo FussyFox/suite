@@ -1,0 +1,44 @@
+language: python
+services:
+- docker
+sudo: true
+python:
+- '3.6'
+cache:
+- pip
+install:
+- pip install -U codecov
+- pip install -r requirements-dev.txt
+script:
+- coverage run --source lintipy -m pytest
+after_success:
+- codecov
+jobs:
+  include:
+  - stage: deploy
+    script: "./build_with_docker.sh"
+    deploy:
+      provider: lambda
+      skip_cleanup: true
+      function_name: lambda-lint_pydocstyle
+      region: eu-west-1
+      role: jobs:
+  include:
+  - stage: deploy
+    script: "./build_with_docker.sh"
+    deploy:
+      provider: lambda
+      skip_cleanup: true
+      function_name: lambda-lint_suite
+      region: eu-west-1
+      role: arn:aws:iam::327092303989:role/lambda-lint_lambda_function
+      runtime: python3.6
+      module_name: main
+      handler_name: handle
+      timeout: 300
+      dot_match: true
+      access_key_id: AKIAIQHWJ4DO6Q4MCT2A
+      secret_access_key:
+        secure: ao1mW06/fkCKViI6VyakKUw2eT7IpuGE8OP+LnHVBYxYZsvPm1fiA7TkE5zexHY7+Yueg31R7AXea16WT5RAeKvZ+1Wm6fsBCYXADc7e/0jrmo4tuC8iDMASN05XQAnuTurZKmVMQpWsiAOk8Ba/JBTdXE/5wsPrFlMmTrwkAd7Si5ULbnA9CJQlCe/vgo1tgwKZRwp/RUnIPz4K3vjx3+R1SLqkIYfwZ1er8xMCleXlnXIlCVCuPnGR16z43QdUzwNwVm1e62HqaKAfMbOonIRjg4ItjO8KxmSckwiV5kMIZ6G0NFfsd7v7GYna2QHIy52TQmZvpZCLrNX2pGOigL2+FYJ6I21fFWx7F1zXPj69fM1qu8yrWErGF0jVMd49jUiK++FPNJh0a3srBFuqiKKDoMpnaE4afGfgoADJWhFIDI1sAe2jy0jv7rMnFqdtlkZpha8WwJZWMNTimTWroH6ciuwOw2YIm2bTeQz2hzijW7y4k1DPT02B4yVJpUWUFRBWWhR1cdfZQwXTSaoqOpnA1MweTCY0tT9avaW88Gpib5PT/p6BUeS9s4PN8utjVHSufV0HlYN0d2adwOvSDrmbTWGbgOqXjwdqTD8V9L9L3/CGJmh24B/lm5DjKxR7CEQGWGv7cHNNxZqX/mOocfCJ1fQT7e5KE5tpKy0eGBQ=
+      on:
+        repo: LambdaLint/suite
