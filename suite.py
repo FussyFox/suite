@@ -15,10 +15,17 @@ root_logger.addHandler(logging.StreamHandler(sys.stdout))
 class CheckSuite(DownloadCodeMixin, GitHubEvent):
     """AWS lambda handler for GitHub ``check_suite`` events."""
 
+    COMPLETED = 'completed'
+    REQUESTED = 'requested'
+    REREQUESTED = 'rerequested'
+
     config_file_pattern = '.check_suite.yml'
 
     def __call__(self, event, context):
         super().__call__(event, context)
+        if self.hook['action'] not in [self.REQUESTED, self.REREQUESTED]:
+            logger.info('no action required')
+            return
         path = self.download_code()
         config = set(self.load_config(path) or [])
 
