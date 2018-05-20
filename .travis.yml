@@ -20,15 +20,6 @@ jobs:
     deploy:
       provider: lambda
       skip_cleanup: true
-      function_name: lambda-lint_pydocstyle
-      region: eu-west-1
-      role: jobs:
-  include:
-  - stage: deploy
-    script: "./build_with_docker.sh"
-    deploy:
-      provider: lambda
-      skip_cleanup: true
       function_name: lambda-lint_suite
       region: eu-west-1
       role: arn:aws:iam::327092303989:role/lambda-lint_lambda_function
