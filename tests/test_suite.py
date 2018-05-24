@@ -1,5 +1,6 @@
 import json
 import os
+from lintipy import COMPLETED
 from pathlib import Path
 
 import httpretty
@@ -67,6 +68,17 @@ class TestSuite:
         )
 
         handler.create_check_run('pycodestyle')
+        handler.create_check_run('pycodestyle', status=COMPLETED, body='hello world')
+
+    def test_create_getting_started_guide(self, handler):
+        body = handler.create_getting_started_guide({
+            'example': 'https://example.com/'
+        })
+        print(body)
+
+        assert "# Getting started" in body
+        assert "*   [example](https://example.com/)" in body
 
     def test_call(self, handler):
+        handler.create_check_run = lambda *args, **kwargs: None
         handler(handler.event, {})

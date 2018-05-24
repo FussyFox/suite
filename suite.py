@@ -3,7 +3,7 @@ import os
 import sys
 
 import yaml
-from lintipy import DownloadCodeMixin, GitHubEvent, QUEUED
+from lintipy import DownloadCodeMixin, GitHubEvent, QUEUED, COMPLETED
 
 logger = logging.getLogger('suite')
 
@@ -30,13 +30,17 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         config = set(self.load_config(path) or [])
 
         with open('check_runs.yml') as fs:
-            supported_check_runs = set(yaml.safe_load(fs))
+            services = yaml.safe_load(fs)
+        supported_check_runs = set(services.keys())
 
         logger.debug(config)
         logger.debug(supported_check_runs)
 
         for name in supported_check_runs & config:
             self.create_check_run(name)
+        else:
+            body = self.create_getting_started_guide(services)
+            self.create_check_run('getting started', status=COMPLETED, body=body)
 
     @property
     def head_branch(self):
@@ -70,14 +74,30 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
             logger.error("file not found")
             return None
 
-    def create_check_run(self, name):
+    def create_getting_started_guide(self, services):
+        with open('getting_started.md') as fp:
+            body = fp.read()
+        hyperlink_pattern = "*   [{title}]({href})"
+        service_links = (
+            hyperlink_pattern.format(title=title, href=url)
+            for title, url in services.items()
+        )
+        body += "\n".join(service_links)
+        return body
+
+    def create_check_run(self, name, status=QUEUED, body=None):
         logger.info("createing check run: %s", name)
         data = {
             'name': name,
             'head_branch': self.head_branch,
             'head_sha': self.sha,
-            'status': QUEUED,
+            'status': status,
         }
+        if body is not None:
+            data['output'] = {
+                'title': name,
+                'summary': body,
+            }
         response = self.session.post(self.check_runs_url, json=data)
         logger.debug(response.content.decode())
         response.raise_for_status()
