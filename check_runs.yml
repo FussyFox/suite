@@ -1,4 +1,4 @@
-- pycodestyle
-- pydocstyle
-- pyflakes
-- bandit
+pycodestyle: http://pycodestyle.pycqa.org/en/latest/
+pydocstyle: http://pydocstyle.pycqa.org/en/latest/
+pyflakes: https://github.com/PyCQA/pyflakes
+bandit: https://bandit.readthedocs.io/en/latest/
