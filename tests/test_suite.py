@@ -75,7 +75,7 @@ class TestSuite:
             'example': 'https://example.com/'
         })
 
-        assert "# Getting started" in body
+        assert "[click here][template]" in body
         assert "*   [example](https://example.com/)" in body
 
     def test_call(self, handler):

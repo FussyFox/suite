@@ -42,7 +42,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
             self.create_check_run(name)
         else:
             body = self.create_getting_started_guide(services)
-            self.create_check_run('getting started', status=COMPLETED, body=body, conclusion=NEUTRAL)
+            self.create_check_run('Getting Started', status=COMPLETED, body=body, conclusion=NEUTRAL)
 
     @property
     def head_branch(self):
