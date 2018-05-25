@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import sys
+import urllib.parse
 
 import yaml
 from lintipy import DownloadCodeMixin, GitHubEvent, QUEUED, COMPLETED, NEUTRAL
@@ -20,7 +21,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
     REQUESTED = 'requested'
     REREQUESTED = 'rerequested'
 
-    config_file_pattern = '.check_suite.yml'
+    config_file_pattern = '.checks.yml'
 
     def __call__(self, event, context):
         super().__call__(event, context)
@@ -84,6 +85,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
             for title, url in services.items()
         )
         body += "\n".join(service_links)
+        body += "\n[tempalte]: %s" % self.get_new_config_link()
         return body
 
     def create_check_run(self, name, status=QUEUED, body=None, conclusion=None):
@@ -106,6 +108,18 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         response = self.session.post(self.check_runs_url, json=data)
         logger.debug(response.content.decode())
         response.raise_for_status()
+
+    def get_new_config_link(self):
+        url = "https://github.com/{full_name}/new/master?".format(
+            full_name=self.hook['repository']['full_name']
+        )
+        with open('template.yml') as f:
+            template = f.read()
+        kwargs = {
+            'filename': self.config_file_pattern,
+            'value': template
+        }
+        return url + urllib.parse.urlencode(kwargs)
 
 
 def handler(event, context):
