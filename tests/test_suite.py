@@ -74,7 +74,6 @@ class TestSuite:
         body = handler.create_getting_started_guide({
             'example': 'https://example.com/'
         })
-        print(body)
 
         assert "# Getting started" in body
         assert "*   [example](https://example.com/)" in body
