@@ -38,9 +38,11 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         logger.debug(config)
         logger.debug(supported_check_runs)
 
-        for name in supported_check_runs & config:
+        check_runs = supported_check_runs & config
+
+        for name in check_runs:
             self.create_check_run(name)
-        else:
+        if not check_runs:
             body = self.create_getting_started_guide(services)
             self.create_check_run('Getting Started', status=COMPLETED, body=body, conclusion=NEUTRAL)
 
