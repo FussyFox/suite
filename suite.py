@@ -1,9 +1,10 @@
+import datetime
 import logging
 import os
 import sys
 
 import yaml
-from lintipy import DownloadCodeMixin, GitHubEvent, QUEUED, COMPLETED
+from lintipy import DownloadCodeMixin, GitHubEvent, QUEUED, COMPLETED, NEUTRAL
 
 logger = logging.getLogger('suite')
 
@@ -40,7 +41,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
             self.create_check_run(name)
         else:
             body = self.create_getting_started_guide(services)
-            self.create_check_run('getting started', status=COMPLETED, body=body)
+            self.create_check_run('getting started', status=COMPLETED, body=body, conclusion=NEUTRAL)
 
     @property
     def head_branch(self):
@@ -85,7 +86,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         body += "\n".join(service_links)
         return body
 
-    def create_check_run(self, name, status=QUEUED, body=None):
+    def create_check_run(self, name, status=QUEUED, body=None, conclusion=None):
         logger.info("createing check run: %s", name)
         data = {
             'name': name,
@@ -98,6 +99,10 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
                 'title': name,
                 'summary': body,
             }
+        if conclusion:
+            data['conclusion'] = conclusion
+        if status == COMPLETED:
+            data['completed_at'] = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
         response = self.session.post(self.check_runs_url, json=data)
         logger.debug(response.content.decode())
         response.raise_for_status()
