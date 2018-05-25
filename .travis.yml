@@ -25,8 +25,8 @@ jobs:
       region: eu-west-1
       role: arn:aws:iam::327092303989:role/lambda-lint_lambda_function
       runtime: python3.6
-      module_name: main
-      handler_name: handle
+      module_name: suite
+      handler_name: handler
       timeout: 300
       dot_match: true
       access_key_id: AKIAJTUSZCFJO2PNDFHQ
