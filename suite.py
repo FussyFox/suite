@@ -85,7 +85,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
             for title, url in services.items()
         )
         body += "\n".join(service_links)
-        body += "\n[tempalte]: %s" % self.get_new_config_link()
+        body += "\n\n[template]: %s\n" % self.get_new_config_link()
         return body
 
     def create_check_run(self, name, status=QUEUED, body=None, conclusion=None):
