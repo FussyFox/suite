@@ -16,11 +16,11 @@ jobs:
     - coverage run --source lintipy -m pytest
     after_success:
     - codecov
-  - stage: development
+  - stage: deploy
     script: "./build_with_docker.sh"
     deploy:
       provider: lambda
-      skip_cleanup: trues
+      skip_cleanup: true
       function_name: lambda-lint-dev_suite
       region: eu-west-1
       role: arn:aws:iam::327092303989:role/lambda-lint_lambda_function
@@ -36,23 +36,3 @@ jobs:
         repo: LambdaLint/suite
     on:
       branch: develop
-  - stage: production
-    script: "./build_with_docker.sh"
-    deploy:
-      provider: lambda
-      skip_cleanup: true
-      function_name: lambda-lint_suite
-      region: eu-west-1
-      role: arn:aws:iam::327092303989:role/lambda-lint_lambda_function
-      runtime: python3.6
-      module_name: suite
-      handler_name: handler
-      timeout: 300
-      dot_match: true
-      access_key_id: AKIAJTUSZCFJO2PNDFHQ
-      secret_access_key:
-        secure: "rWMbQ11DPRndBUEXU7Zc4KXm/bV9uNUKMrW3C41qqVyAiiW+TJZZR9Kcu+WFTBAyCnRxoUOnxZbxlBscjvt8sI/5mpdAnAP/im32e2/y33VINmHZ0X0uK/YAxEfIM9abSLzs3U4yw+WFOg6IgY7P1XG0kumNnf36TlUDlBG5r3VMWVgA6NxfsKbOcLgU+6ZxACR5ZF/mmHL8w12FECBo4RLlg0N+Q5vfwep3+BTNLUzBcAstWinSkTeecpIoHM6h3rBcY56ANi2D39doW7NMurH0AhV8anGieb6L56Kscs+7nR1KI9nRBMRsi1zDQQ3EzU02XFHKmc2DdSJgtQ17ZI0TCF5G4BZ7RpFxWg+zy3YGaRpkX8HOOb5vJtgCPvZ8YXvEfBJ0UUUS9sD1JJw6XAeDRd9wIPoPZIHeYyUOm4EoGX8Nb4iGkliRA8+dOo8RxRU40Ooi9oRbQbZqCG3OtRFfl7MhLLIV4of0Y++3Woi4csN4g4vCcc2HsE0oS/gX24tgDOHwoG1GBirzzMneJA+slFsHbP33OIk73jeK+vx7WuazZGIu2HH0pUZJrYh7Qk6kWQzWDViBbDc8I86d9oqCbgNPuCaNlklHWxa7GhHD3zsQH3RqRdp+Xwes1iDytdk/oslNg44BhXgQBfX+YAndDmCI+SoJRJCVcHkW+Qg="
-      on:
-        repo: LambdaLint/suite
-    on:
-      branch: master
