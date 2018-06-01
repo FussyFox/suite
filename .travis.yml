@@ -55,4 +55,4 @@ jobs:
         on:
           repo: LambdaLint/suite
       on:
-        branch: development
+        branch: develop
