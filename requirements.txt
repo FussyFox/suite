@@ -1,2 +1,2 @@
-pyaml
+pyaml==17.12.1
 lintipy==1.0.1
