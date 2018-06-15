@@ -1,4 +1,4 @@
 -r requirements.txt
-boto3==1.7.37
+boto3==1.7.39
 pytest==3.6.1
 httpretty==0.9.5
