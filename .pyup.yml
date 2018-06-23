@@ -1,2 +1,6 @@
 requirements:
-  - requirements.txt
+  - requirements.txt:
+    update: all
+    pin: True
+  - requirements-dev.txt:
+    update: False
