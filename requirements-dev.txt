@@ -1,4 +1,4 @@
 -r requirements.txt
 boto3
-pytest
+pytest==3.6.2
 httpretty
