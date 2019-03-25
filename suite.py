@@ -5,7 +5,7 @@ import sys
 import urllib.parse
 
 import yaml
-from lintipy import DownloadCodeMixin, GitHubEvent, QUEUED, COMPLETED, NEUTRAL
+from lintipy import COMPLETED, NEUTRAL, QUEUED, DownloadCodeMixin, GitHubEvent
 
 logger = logging.getLogger('suite')
 

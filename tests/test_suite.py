@@ -1,12 +1,12 @@
 import json
 import os
-from lintipy import COMPLETED, NEUTRAL
 from pathlib import Path
 
 import httpretty
 import pytest
-from botocore.vendored import requests
 
+from botocore.vendored import requests
+from lintipy import COMPLETED, NEUTRAL
 from suite import CheckSuite
 
 BASE_DIR = Path(os.path.dirname(__file__))
