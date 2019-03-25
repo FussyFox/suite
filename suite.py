@@ -44,7 +44,12 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
             self.create_check_run(name)
         if not check_runs:
             body = self.create_getting_started_guide(services)
-            self.create_check_run('Getting Started', status=COMPLETED, body=body, conclusion=NEUTRAL)
+            self.create_check_run(
+                'Getting Started',
+                status=COMPLETED,
+                body=body,
+                conclusion=NEUTRAL
+            )
 
     @property
     def head_branch(self):
@@ -106,7 +111,8 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         if conclusion:
             data['conclusion'] = conclusion
         if status == COMPLETED:
-            data['completed_at'] = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+            data['completed_at'] = datetime.datetime.utcnow() \
+                .strftime('%Y-%m-%dT%H:%M:%SZ')
         response = self.session.post(self.check_runs_url, json=data)
         logger.debug(response.content.decode())
         response.raise_for_status()
