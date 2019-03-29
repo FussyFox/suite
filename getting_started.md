@@ -6,8 +6,9 @@ This file should contain a list of the check you want to run.
 You can [click here][template] to create a config file for your repository.
 
 ```yaml
-- pyflakes
 - bandit
+- isort
+- flake8
 ```
 
 Please note that all entries are case sensitive. If the check is not executed
