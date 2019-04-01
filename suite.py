@@ -130,5 +130,4 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         return url + urllib.parse.urlencode(kwargs)
 
 
-def handler(event, context):
-    CheckSuite()(event, context)
+handler = CheckSuite.as_handler()
