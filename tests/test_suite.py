@@ -26,10 +26,10 @@ def check_suite_event():
 class TestSuite:
 
     @pytest.fixture()
-    def handler(self):
+    def handler(self, sns):
         hnd = CheckSuite()
         subject, message = check_suite_event()
-        notice = sns()
+        notice = dict(sns)
         notice['Records'][0]['Sns']['Subject'] = subject
         notice['Records'][0]['Sns']['Message'] = message
         hnd.event = notice
