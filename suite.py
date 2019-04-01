@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import re
 import sys
 import urllib.parse
 
@@ -21,7 +22,10 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
     REQUESTED = 'requested'
     REREQUESTED = 'rerequested'
 
-    config_file_pattern = '.checks.yml'
+    config_file_pattern = re.compile(
+        r'(.github/)?\.?(checks|fussyfox)\.(yml|yaml|json)',
+        re.IGNORECASE,
+    )
 
     def __call__(self, event, context):
         super().__call__(event, context)
@@ -51,6 +55,14 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
                 conclusion=NEUTRAL
             )
 
+    @staticmethod
+    def find_config_file(path, regexpr):
+        """Return first file matching the regular expression."""
+        for base_dir, dir_names, filenames in os.walk(path):
+            for filename in filenames:
+                if regexpr.match(filename):
+                    return os.path.join(path, filename)
+
     @property
     def head_branch(self):
         return self.hook['check_suite']['head_branch']
@@ -74,7 +86,9 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
 
     def load_config(self, path):
         """Return config dictionary or ``None`` if no config was found."""
-        config_path = os.path.join(path, self.config_file_pattern)
+        config_path = self.find_config_file(path, self.config_file_pattern)
+        if config_path is None:
+            return
         logger.info("Reading config: %s", config_path)
         try:
             with open(config_path) as fs:
