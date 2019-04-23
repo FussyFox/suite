@@ -82,6 +82,7 @@ class TestSuite:
 
         assert "[click here][template]" in body
         assert "*   [example](https://example.com/)" in body
+        assert "https://github.com/baxterthehacker/public-repo/new/master?filename=.fussyfox.yml" in body
 
     def test_call(self, handler):
         handler.create_check_run = lambda *args, **kwargs: None
