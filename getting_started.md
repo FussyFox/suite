@@ -1,4 +1,4 @@
-To enable checks for this repository simply add a `.checks.yml` file.
+To enable checks for this repository simply add a `.fussyfox.yml` file.
 This file should contain a list of the check you want to run.
 
 ### Sample
