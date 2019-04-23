@@ -22,6 +22,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
     REQUESTED = 'requested'
     REREQUESTED = 'rerequested'
 
+    config_file_default = '.fussyfox.yml'
     config_file_pattern = re.compile(
         r'(.github/)?\.?(checks|fussyfox)\.(yml|yaml|json)',
         re.IGNORECASE,
@@ -138,7 +139,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         with open('template.yml') as f:
             template = f.read()
         kwargs = {
-            'filename': self.config_file_pattern,
+            'filename': self.config_file_default,
             'value': template
         }
         return url + urllib.parse.urlencode(kwargs)
