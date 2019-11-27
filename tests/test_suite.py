@@ -22,22 +22,31 @@ def check_suite_event():
         return 'check_suite', f.read()
 
 
+def pull_request_event():
+    with open(BASE_DIR / 'fixtures' / 'pullRequestEvent.json') as f:
+        return 'pull_request', f.read()
+
+
+def pytest_generate_tests(metafunc):
+    if 'handler' in metafunc.fixturenames:
+        metafunc.parametrize('handler', [check_suite_event, pull_request_event], indirect=True)
+
+
+@pytest.fixture()
+def handler(request, sns):
+    hnd = CheckSuite()
+    subject, message = request.param()
+    notice = dict(sns)
+    notice['Records'][0]['Sns']['Subject'] = subject
+    notice['Records'][0]['Sns']['Message'] = message
+    hnd.event = notice
+    hnd.event_type = subject
+    hnd.hook = json.loads(message)
+    hnd._session = requests.Session()
+    return hnd
+
+
 class TestSuite:
-
-    @pytest.fixture()
-    def handler(self, sns):
-        hnd = CheckSuite()
-        subject, message = check_suite_event()
-        notice = dict(sns)
-        notice['Records'][0]['Sns']['Subject'] = subject
-        notice['Records'][0]['Sns']['Message'] = message
-        hnd.event = notice
-        hnd.hook = json.loads(message)
-        hnd._session = requests.Session()
-        return hnd
-
-    def test_head_branch(self, handler):
-        assert handler.head_branch == 'master'
 
     def test_sha(self, handler):
         assert handler.sha == '0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c'

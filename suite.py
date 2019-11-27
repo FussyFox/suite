@@ -18,9 +18,14 @@ root_logger.addHandler(logging.StreamHandler(sys.stdout))
 class CheckSuite(DownloadCodeMixin, GitHubEvent):
     """AWS lambda handler for GitHub ``check_suite`` events."""
 
+    CHECK_SUITE = 'check_suite'
     COMPLETED = 'completed'
     REQUESTED = 'requested'
     REREQUESTED = 'rerequested'
+
+    PULL_REQUEST = 'pull_request'
+    OPENED = 'opened'
+    EDITED = 'edited'
 
     config_file_default = '.fussyfox.yml'
     config_file_pattern = re.compile(
@@ -30,7 +35,13 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
 
     def __call__(self, event, context):
         super().__call__(event, context)
-        if self.hook['action'] not in [self.REQUESTED, self.REREQUESTED]:
+        if self.event_type == self.CHECK_SUITE and \
+                self.hook['action'] in [self.REQUESTED, self.REREQUESTED]:
+            pass
+        if self.event_type == self.PULL_REQUEST and \
+                self.hook['action'] in [self.OPENED, self.EDITED]:
+            pass
+        else:
             logger.info('no action required')
             return
         path = self.download_code()
@@ -65,12 +76,12 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
                     return os.path.join(path, filename)
 
     @property
-    def head_branch(self):
-        return self.hook['check_suite']['head_branch']
-
-    @property
     def sha(self):
-        return self.hook['check_suite']['head_sha']
+        event = self.hook[self.event_type]
+        try:
+            return event['head_sha']
+        except KeyError:
+            return event['head']['sha']
 
     @property
     def archive_url(self):
@@ -114,7 +125,6 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         logger.info("createing check run: %s", name)
         data = {
             'name': name,
-            'head_branch': self.head_branch,
             'head_sha': self.sha,
             'status': status,
         }
