@@ -25,7 +25,9 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
 
     PULL_REQUEST = 'pull_request'
     OPENED = 'opened'
+    REOPENED = 'reopened'
     EDITED = 'edited'
+    SYNCHRONIZE = 'synchronize'
 
     config_file_default = '.fussyfox.yml'
     config_file_pattern = re.compile(
@@ -39,7 +41,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
                 self.hook['action'] in [self.REQUESTED, self.REREQUESTED]:
             pass
         if self.event_type == self.PULL_REQUEST and \
-                self.hook['action'] in [self.OPENED, self.EDITED]:
+                self.hook['action'] in [self.OPENED, self.OPENED, self.EDITED, self.SYNCHRONIZE]:
             pass
         else:
             logger.info('no action required')
