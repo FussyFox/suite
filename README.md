@@ -1,5 +1,6 @@
 # Suite
-Parse check suite config and create new check runs
+
+Parse check suite config and create new check runs.
 
 
 ### Sample config
