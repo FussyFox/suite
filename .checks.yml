@@ -1,3 +1,4 @@
+- black
 - bandit
 - isort
 - flake8
