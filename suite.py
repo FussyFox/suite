@@ -41,7 +41,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
                 self.hook['action'] in [self.REQUESTED, self.REREQUESTED]:
             pass
         if self.event_type == self.PULL_REQUEST and \
-                self.hook['action'] in [self.OPENED, self.REOPENED, self.EDITED, self.SYNCHRONIZE]:
+                self.hook['action'] in [self.OPENED, self.REOPENED, self.SYNCHRONIZE]:
             pass
         else:
             logger.info('no action required')
