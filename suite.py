@@ -40,7 +40,7 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         if self.event_type == self.CHECK_SUITE and \
                 self.hook['action'] in [self.REQUESTED, self.REREQUESTED]:
             pass
-        if self.event_type == self.PULL_REQUEST and \
+        elif self.event_type == self.PULL_REQUEST and \
                 self.hook['action'] in [self.OPENED, self.REOPENED, self.SYNCHRONIZE]:
             pass
         else:
