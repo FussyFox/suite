@@ -1,5 +1,4 @@
 flake8: http://flake8.pycqa.org/en/latest/
-black: https://black.readthedocs.io/en/stable/
 pycodestyle: http://pycodestyle.pycqa.org/en/latest/
 pydocstyle: http://pydocstyle.pycqa.org/en/latest/
 pyflakes: https://github.com/PyCQA/pyflakes
