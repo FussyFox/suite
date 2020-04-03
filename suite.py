@@ -10,10 +10,6 @@ from lintipy import COMPLETED, NEUTRAL, QUEUED, DownloadCodeMixin, GitHubEvent
 
 logger = logging.getLogger('suite')
 
-root_logger = logging.getLogger('')
-root_logger.setLevel(logging.DEBUG)
-root_logger.addHandler(logging.StreamHandler(sys.stdout))
-
 
 class CheckSuite(DownloadCodeMixin, GitHubEvent):
     """AWS lambda handler for GitHub ``check_suite`` events."""
