@@ -1,2 +1,2 @@
 pyaml==20.4.0
-lintipy==1.4.1
+lintipy==1.4.2
