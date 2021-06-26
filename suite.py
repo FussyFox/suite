@@ -6,7 +6,7 @@ import sys
 import urllib.parse
 
 import yaml
-from lintipy import COMPLETED, NEUTRAL, QUEUED, DownloadCodeMixin, GitHubEvent
+from lintipy import COMPLETED, ACTION_REQUIRED, QUEUED, DownloadCodeMixin, GitHubEvent
 
 logger = logging.getLogger('suite')
 
@@ -45,25 +45,15 @@ class CheckSuite(DownloadCodeMixin, GitHubEvent):
         path = self.download_code()
         config = set(self.load_config(path) or [])
 
-        with open('check_runs.yml') as fs:
-            services = yaml.safe_load(fs)
-        supported_check_runs = set(services.keys())
-
         logger.debug(config)
-        logger.debug(supported_check_runs)
 
-        check_runs = supported_check_runs & config
-
-        for name in check_runs:
-            self.create_check_run(name)
-        if not check_runs:
-            body = self.create_getting_started_guide(services)
-            self.create_check_run(
-                'Getting Started',
-                status=COMPLETED,
-                body=body,
-                conclusion=NEUTRAL
-            )
+        self.create_check_run(
+            'BYE BYE',
+            status=COMPLETED,
+            body='Since GitHub have been getting so fast (especially with caching),'
+                 ' we decided to discontinue this service. Thank you for your trust!',
+            conclusion=ACTION_REQUIRED,
+        )
 
     @staticmethod
     def find_config_file(path, regexpr):
